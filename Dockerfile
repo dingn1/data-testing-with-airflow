@@ -68,18 +68,10 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 # Java
-RUN cd /opt/ \
-  && wget \
-    --no-cookies \
-    --no-check-certificate \
-    --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
-    "http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz" \
-    -O jdk-8.tar.gz \
-  && tar xzf jdk-8.tar.gz \
-  && rm jdk-8.tar.gz \
-  && update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_151/bin/java 100 \
-  && update-alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_151/bin/jar 100 \
-&& update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_151/bin/javac 100
+RUN add-apt-repository ppa:openjdk-r/ppa \
+ && apt-get update \
+ && apt-get install openjdk-8-jdk
+
 # SPARK
 RUN cd /usr/ \
   && wget "http://apache.mirrors.spacedump.net/spark/spark-2.2.0/spark-2.2.0-bin-hadoop2.7.tgz" \
