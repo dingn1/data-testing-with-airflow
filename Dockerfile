@@ -115,4 +115,4 @@ RUN cd ${AIRFLOW_HOME}/dags/production && git checkout master
 COPY docker_files/prd.conf ${AIRFLOW_HOME}/dags/production/dags/environment.conf
 
 ENTRYPOINT /entrypoint.sh
-RUN cd /usr/local/airflow && ./bin/spark-submit --master local populate_tables.py
+RUN cd /usr/local/airflow && spark-submit --master local populate_tables.py
