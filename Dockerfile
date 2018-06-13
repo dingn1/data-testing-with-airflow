@@ -68,9 +68,9 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 # Java
-RUN add-apt-repository ppa:openjdk-r/ppa \
- && apt-get update \
- && apt-get install openjdk-8-jdk
+RUN apt-get update \
+ && apt-get install default-jre \
+ && apt-get install openjdk-8-jdk 
 
 # SPARK
 RUN cd /usr/ \
