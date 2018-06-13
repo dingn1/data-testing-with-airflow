@@ -69,8 +69,8 @@ RUN set -ex \
         /usr/share/doc-base
 # Java
 RUN apt-get update \
- && apt-get install default-jre \
- && apt-get install openjdk-8-jdk 
+ && apt-get install -yqq default-jre \
+ && apt-get install -yqq openjdk-8-jdk 
 
 # SPARK
 RUN cd /usr/ \
