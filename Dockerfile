@@ -73,11 +73,7 @@ RUN apt-get update \
  && apt-get install -yqq openjdk-8-jdk 
 
 # SPARK
-RUN cd /usr/ \
-  && wget "https://www.apache.org/dyn/closer.lua/spark/spark-2.2.1/spark-2.2.1-bin-hadoop2.7.tgz" \
-  && tar xzf spark-2.2.1-bin-hadoop2.7.tgz \
-  && rm spark-2.2.1-bin-hadoop2.7.tgz \
-  && mv spark-2.2.1-bin-hadoop2.7 spark
+RUN pip install pyspark
 
 ENV SPARK_HOME /usr/spark
 ENV SPARK_MAJOR_VERSION 2
