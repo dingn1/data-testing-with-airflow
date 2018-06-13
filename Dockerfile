@@ -50,6 +50,7 @@ RUN set -ex \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
     && python -m pip install -U pip setuptools wheel \
+    && pip install pip==9.0.3 \
     && pip install Cython \
     && pip install pytz \
     && pip install pyOpenSSL \
@@ -72,7 +73,7 @@ RUN cd /opt/ \
     --no-cookies \
     --no-check-certificate \
     --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
-    "http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jdk-8u151-linux-x64.tar.gz" \
+    "http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz" \
     -O jdk-8.tar.gz \
   && tar xzf jdk-8.tar.gz \
   && rm jdk-8.tar.gz \
