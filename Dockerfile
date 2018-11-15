@@ -10,8 +10,15 @@ FROM python:3.6
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
+# Java
+ARG JAVA_MAJOR_VERSION=8
+ARG JAVA_MINOR_VERSION=181
+
+# Spark
+ARG SPARK_VERSION=2.3.1
+
 # Airflow
-ARG AIRFLOW_VERSION=1.8.2
+ARG AIRFLOW_VERSION=1.9.0
 ARG AIRFLOW_HOME=/usr/local/airflow
 ENV AIRFLOW_HOME=/usr/local/airflow
 
@@ -68,12 +75,24 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 # Java
-RUN apt-get update \
- && apt-get install -yqq default-jre \
- && apt-get install -yqq openjdk-8-jdk 
-
+RUN cd /opt/ \
+  && wget \
+    --no-cookies \
+    --no-check-certificate \
+    --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+    "http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-${JAVA_MAJOR_VERSION}u${JAVA_MINOR_VERSION}-linux-x64.tar.gz" \
+    -O jdk-${JAVA_MAJOR_VERSION}.tar.gz \
+  && tar xzf jdk-${JAVA_MAJOR_VERSION}.tar.gz \
+  && rm jdk-${JAVA_MAJOR_VERSION}.tar.gz \
+  && update-alternatives --install /usr/bin/java java /opt/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_MINOR_VERSION}/bin/java 100 \
+  && update-alternatives --install /usr/bin/jar jar /opt/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_MINOR_VERSION}/bin/jar 100 \
+&& update-alternatives --install /usr/bin/javac javac /opt/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_MINOR_VERSION}/bin/javac 100
 # SPARK
-RUN pip install pyspark
+RUN cd /usr/ \
+  && wget "http://www-eu.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz" \
+  && tar xzf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz \
+  && rm spark-${SPARK_VERSION}-bin-hadoop2.7.tgz \
+  && mv spark-${SPARK_VERSION}-bin-hadoop2.7 spark
 
 ENV SPARK_MAJOR_VERSION 2
 ENV PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$SPARK_HOME/python/:$PYTHONPATH
@@ -115,4 +134,5 @@ RUN cd ${AIRFLOW_HOME}/dags/production && git checkout master
 COPY docker_files/prd.conf ${AIRFLOW_HOME}/dags/production/dags/environment.conf
 
 ENTRYPOINT /entrypoint.sh
-RUN cd /usr/local/airflow && spark-submit --master local populate_tables.py
+
+RUN cd /usr/local/airflow && /usr/spark/bin/spark-submit --master local populate_tables.py
